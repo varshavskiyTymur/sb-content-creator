@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+      "target": "ES2022",
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      "outDir": "./build",
+      "rootDir": "./src",
+      "baseUrl": "./src",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "paths": {
+      "@tools/*": ["./tools/*"],
+      "@services/*": ["./services/*"],
+      "@server/*": ["./server/*"]
+      }
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"],
+    
+  }
