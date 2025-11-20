@@ -89,4 +89,55 @@ export class StoryblokApiClient{
     async getComponents(){
         return this.request("GET", "components/");
     }
+
+    async getAssets(){
+        return this.request("GET", "assets/");
+    }
+
+    async getAsset( assetId: number ){
+        return this.request("GET", `assets/${assetId}`);
+    }
+
+    async deleteAsset( assetId: number ){
+        return this.request("DELETE", `assets/${assetId}`);
+    }
+    
+
+
+    // Separeted method for uploading assets with form data
+    private async requestWithFormData(
+        method: string,
+        endpoint: string,
+        formData: FormData
+    ) : Promise<any>{
+        const url = `${STORYBLOK_API_BASE}/spaces/${this.spaceId}${endpoint}`;
+
+        const headers = {
+            "Authorization": `Bearer ${this.accessToken}`,
+        };
+
+        const response = await fetch(url, {
+            method,
+            headers,
+            body: formData,
+    });
+
+    if(!response.ok){
+        const error = await response.json();
+        throw new Error(`${response.status} ${response.statusText}: ${error.message || "Unknown error"}`);
+    }
+
+    return await response.json();
+    }
+
+    async uploadAsset( file: File ){
+        const formData = new FormData();
+        formData.append("file", file);
+        return this.requestWithFormData("POST", "assets/", formData);
+    }
+    
+    async finishUpload(assetId: number){
+        return this.requestWithFormData("POST", `assets/${assetId}/finish-upload`, new FormData());
+    }
 }
+

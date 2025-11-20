@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { StoryblokApiClient } from "../services/storyblok-api.js";
+import { StoryblokApiClient } from "@services/storyblok-api.js";
 
 export function registerStoryTools(server: McpServer, apiClient: StoryblokApiClient) {
 
@@ -85,7 +85,93 @@ export function registerStoryTools(server: McpServer, apiClient: StoryblokApiCli
         }
     );
 
-    // server.registerTool('deleteStory', ...)
-    // server.registerTool('getStory', ...)
-    // server.registerTool('listStories', ...)
+    server.registerTool(
+        'deleteStory',
+        {
+            title: 'Delete Story',
+            description: 'Delete an existing story in Storyblok',
+            inputSchema: {
+                storyId: z.number().describe('Story ID')
+            }
+        },
+        async ({ storyId }) => {
+            try {
+                const result = await apiClient.deleteStory(storyId);
+                const output = { success: true };
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(output) }],
+                    structuredContent: output
+                };
+            } catch (error) {
+                return {
+                    content: [{ type: 'text', text: `Error: ${error}` }],
+                    isError: true
+                };
+            }
+        }
+    );  
+
+    
+    server.registerTool(
+        'getStory',
+        {
+            title: 'Get Story',
+            description: 'Get an existing story from Storyblok',
+            inputSchema: {
+                storyId: z.number().describe('Story ID')
+            },
+            outputSchema: {
+                story: z.any(),
+                success: z.boolean()
+            }
+        },
+        async ({ storyId }) => {
+            try {
+                const result = await apiClient.getStory(storyId);
+                const output = { story: result, success: true };
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(output) }],
+                    structuredContent: output
+                };
+            } catch (error) {
+                return {
+                    content: [{ type: 'text', text: `Error: ${error}` }],
+                    isError: true
+                };
+            }
+        }
+    )
+    
+
+    server.registerTool(
+        'listStories',
+        {
+            title: 'List Stories',
+            description: 'List all stories in Storyblok',
+            inputSchema: {
+                per_page: z.number().optional().describe('Number of stories per page'),
+                page: z.number().optional().describe('Page number'),
+                filter_query: z.string().optional().describe('Filter query')
+            },
+            outputSchema: {
+                stories: z.array(z.any()),
+                success: z.boolean()
+            }
+        },
+        async ({ per_page, page, filter_query }) => {
+            try {
+                const result = await apiClient.listStories({ per_page, page, filter_query });
+                const output = { stories: result, success: true };
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(output) }],
+                    structuredContent: output
+                };
+            } catch (error) {
+                return {
+                    content: [{ type: 'text', text: `Error: ${error}` }],
+                    isError: true
+                };
+            }
+        }
+    )
 }

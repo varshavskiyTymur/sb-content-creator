@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StoryblokApiClient } from "../services/storyblok-api.js";
+import { StoryblokApiClient } from "@services/storyblok-api.js";
 import { registerStoryTools } from "@tools/stories.js";
+
 
 export function createStoryblokServer() {
     const server = new McpServer(
@@ -22,6 +23,7 @@ export function createStoryblokServer() {
 
     // Регистрируем инструменты
     registerStoryTools(server, apiClient);
+
     
     return server;
 }
