@@ -1,10 +1,11 @@
+import { error } from "console";
 import * as dotenv from "dotenv";
 
 
 dotenv.config();
 
 
-const STORYBLOK_API_BASE = process.env.SOTRYBLOK_API_BASE;
+const STORYBLOK_API_BASE = process.env.STORYBLOK_API_BASE;
 
 export class StoryblokApiClient{
     private spaceId: string;
@@ -109,26 +110,50 @@ export class StoryblokApiClient{
         method: string,
         endpoint: string,
         formData: FormData
-    ) : Promise<any>{
+    ): Promise<any> {
         const url = `${STORYBLOK_API_BASE}/spaces/${this.spaceId}${endpoint}`;
-
+    
         const headers = {
             "Authorization": `Bearer ${this.accessToken}`,
         };
+    
+        try {
+            const response = await fetch(url, {
+                method,
+                headers,
+                body: formData,
+            });
 
-        const response = await fetch(url, {
-            method,
-            headers,
-            body: formData,
-    });
+            if (!response.ok) {
+                let message = `HTTP ${response.status} ${response.statusText}`;
+    
 
-    if(!response.ok){
-        const error = await response.json();
-        throw new Error(`${response.status} ${response.statusText}: ${error.message || "Unknown error"}`);
+                try {
+                    const jsonError = await response.json();
+                    if (jsonError?.message) message += `: ${jsonError.message}`;
+                    else message += `: ${JSON.stringify(jsonError)}`;
+                } catch {
+                    // Если это не JSON
+                    try {
+                        const text = await response.text();
+                        message += `: ${text}`;
+                    } catch {}
+                }
+    
+                throw new Error(message);
+            }
+
+            try {
+                return await response.json();
+            } catch {
+                throw new Error(`Invalid JSON in response from ${url}`);
+            }
+    
+        } catch (err: any) {
+            throw new Error(`Network error requesting ${endpoint}: ${err.message}`);
+        }
     }
-
-    return await response.json();
-    }
+    
 
     async uploadAsset( file: File ){
         const formData = new FormData();
@@ -137,7 +162,29 @@ export class StoryblokApiClient{
     }
     
     async finishUpload(assetId: number){
-        return this.requestWithFormData("POST", `assets/${assetId}/finish-upload`, new FormData());
-    }
+        const endpoint = `assets/${assetId}/finish-upload`;
+
+        const body = {};
+
+        try {
+            const response = await this.request("POST", endpoint, {});
+        
+            if (!response.ok) {
+              let message = "Unknown error";
+              try {
+                const error = await response.json();
+                message = error?.message ?? JSON.stringify(error);
+              } catch {
+                message = await response.text();
+              }
+        
+              throw new Error(`${response.status} ${response.statusText}: ${message}`);
+            }
+        
+            return await response.json();
+          } catch (err: any) {
+            throw new Error(`Network/request error: ${err.message}`);
+          }
+        }
 }
 
