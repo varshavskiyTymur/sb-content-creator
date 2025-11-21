@@ -35,11 +35,35 @@ export class StoryblokApiClient{
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(`${response.status} ${response.statusText}: ${error.message}`);
+            let message = `HTTP ${response.status} ${response.statusText}`;
+        
+            try {
+                const jsonError = await response.json();
+                if (jsonError?.message) {
+                    message += `: ${jsonError.message}`;
+                } else {
+                    message += `: ${JSON.stringify(jsonError)}`;
+                }
+            } catch {
+                try {
+                    const text = await response.text();
+                    if (text) {
+                        message += `: ${text}`;
+                    }
+                } catch {
+                    // если вообще ничего прочитать нельзя — оставляем только статус
+                }
+            }
+        
+            throw new Error(message);
         }
+        
 
-        return await response.json();
+        try {
+            return await response.json();
+        } catch {
+            throw new Error(`Invalid JSON in response from ${url}`);
+        }
     }
 
     async createStory( story: {
@@ -126,32 +150,21 @@ export class StoryblokApiClient{
 
             if (!response.ok) {
                 let message = `HTTP ${response.status} ${response.statusText}`;
-    
-
-                try {
-                    const jsonError = await response.json();
-                    if (jsonError?.message) message += `: ${jsonError.message}`;
-                    else message += `: ${JSON.stringify(jsonError)}`;
-                } catch {
-                    // Если это не JSON
-                    try {
-                        const text = await response.text();
-                        message += `: ${text}`;
-                    } catch {}
-                }
-    
                 throw new Error(message);
             }
-
             try {
                 return await response.json();
             } catch {
                 throw new Error(`Invalid JSON in response from ${url}`);
             }
+
+            
     
         } catch (err: any) {
             throw new Error(`Network error requesting ${endpoint}: ${err.message}`);
         }
+
+        
     }
     
 
@@ -161,30 +174,8 @@ export class StoryblokApiClient{
         return this.requestWithFormData("POST", "assets/", formData);
     }
     
-    async finishUpload(assetId: number){
-        const endpoint = `assets/${assetId}/finish-upload`;
-
-        const body = {};
-
-        try {
-            const response = await this.request("POST", endpoint, {});
-        
-            if (!response.ok) {
-              let message = "Unknown error";
-              try {
-                const error = await response.json();
-                message = error?.message ?? JSON.stringify(error);
-              } catch {
-                message = await response.text();
-              }
-        
-              throw new Error(`${response.status} ${response.statusText}: ${message}`);
-            }
-        
-            return await response.json();
-          } catch (err: any) {
-            throw new Error(`Network/request error: ${err.message}`);
-          }
-        }
+    async finishUpload(assetId: number) {
+        return this.request("POST", `/assets/${assetId}/finish_upload`, {});
+    }
 }
 
