@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { StoryblokApiClient } from "@services/storyblok-api.js";
+import { StoryblokApiClient } from "../services/storyblok-api.js";
 
 
 export function registerComponentTools(server: McpServer, apiClient: StoryblokApiClient) {

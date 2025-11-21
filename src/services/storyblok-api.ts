@@ -10,10 +10,12 @@ const STORYBLOK_API_BASE = process.env.STORYBLOK_API_BASE;
 export class StoryblokApiClient{
     private spaceId: string;
     private accessToken: string;
+    private apiBase: string;
 
-    constructor(spaceId: string, accessToken: string) {
+    constructor(spaceId: string, accessToken: string, apiBase: string) {
         this.spaceId = spaceId;
         this.accessToken = accessToken;
+        this.apiBase = apiBase
     }
 
     private async request(
@@ -21,12 +23,12 @@ export class StoryblokApiClient{
         endpoint: string,
         data?: any
     ) : Promise<any> {
-        const url = `${STORYBLOK_API_BASE}/spaces/${this.spaceId}${endpoint}`;
+        const url = `${this.apiBase}/spaces/${this.spaceId}${endpoint}`;
 
         const headers = {
-            "Authorization": `Bearer ${this.accessToken}`,
+            "Authorization": this.accessToken,
             "Content-Type": "application/json",
-        };
+          };
 
         const response = await fetch(url, {
             method,
@@ -107,7 +109,7 @@ export class StoryblokApiClient{
         if (params?.page) query.set("page", params.page.toString());
         if (params?.filter_query) query.set("filter_query", params.filter_query);
         
-        const endpoint = query.toString() ? `stories/?${query}` : "stories/";
+        const endpoint = query.toString() ? `/stories/?${query}` : "/stories/";
         return this.request("GET", endpoint);
     }
 
@@ -115,8 +117,20 @@ export class StoryblokApiClient{
         return this.request("GET", "components/");
     }
 
-    async getAssets(){
-        return this.request("GET", "assets/");
+    async getAssets(
+        params?: {
+            per_page?: number;
+            page?: number;
+            filter_query?: string;
+        }
+    ){
+        const query = new URLSearchParams();
+        if (params?.per_page) query.set("per_page", params.per_page.toString());
+        if (params?.page) query.set("page", params.page.toString());
+        if (params?.filter_query) query.set("filter_query", params.filter_query);
+        
+        const endpoint = query.toString() ? `assets/?${query}` : "assets/";
+        return this.request("GET", endpoint);
     }
 
     async getAsset( assetId: number ){
@@ -128,7 +142,6 @@ export class StoryblokApiClient{
     }
     
 
-
     // Separeted method for uploading assets with form data
     private async requestWithFormData(
         method: string,
@@ -138,7 +151,7 @@ export class StoryblokApiClient{
         const url = `${STORYBLOK_API_BASE}/spaces/${this.spaceId}${endpoint}`;
     
         const headers = {
-            "Authorization": `Bearer ${this.accessToken}`,
+            "Authorization": this.accessToken,
         };
     
         try {
@@ -173,6 +186,24 @@ export class StoryblokApiClient{
         formData.append("file", file);
         return this.requestWithFormData("POST", "assets/", formData);
     }
+
+    async uploadAssetFromUrl(fileUrl: string) {
+        const response = await fetch(fileUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch file from URL: ${response.status} ${response.statusText}`);
+        }
+      
+        const blob = await response.blob();
+      
+        const urlObj = new URL(fileUrl);
+        const pathname = urlObj.pathname;
+        const filename = pathname.split('/').filter(Boolean).pop() || 'upload.bin';
+      
+        const formData = new FormData();
+        formData.append('file', blob, filename);
+      
+        return this.requestWithFormData('POST', '/assets/', formData);
+      }
     
     async finishUpload(assetId: number) {
         return this.request("POST", `/assets/${assetId}/finish_upload`, {});

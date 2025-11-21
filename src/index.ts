@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { createStoryblokServer } from "./server/storyblok-server.js";
-import 'tsconfig-paths/register';
+import 'tsconfig-paths/register.js';
 
 
 async function main() {
