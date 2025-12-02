@@ -2,9 +2,6 @@
 import "dotenv/config";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { createStoryblokServer } from "./server/storyblok-server.js";
-import 'tsconfig-paths/register.js';
-
-
 
 async function main() {
     const transport = new StdioServerTransport();
@@ -12,7 +9,7 @@ async function main() {
     const server = createStoryblokServer();
 
     await server.connect(transport);
-    console.log("Storyblok content creator server is running");
+    console.error("Storyblok content creator server is running");
 }
 
 main().catch(console.error);
