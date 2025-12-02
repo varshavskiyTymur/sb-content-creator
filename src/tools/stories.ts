@@ -161,7 +161,9 @@ export function registerStoryTools(server: McpServer, apiClient: StoryblokApiCli
         async ({ per_page, page, filter_query }) => {
             try {
                 const result = await apiClient.listStories({ per_page, page, filter_query });
-                const output = { stories: result, success: true };
+                const output = { 
+                    stories: Array.isArray(result?.stories) ? result?.stories : [],
+                    success: true };
                 return {
                     content: [{ type: 'text', text: JSON.stringify(output) }],
                     structuredContent: output

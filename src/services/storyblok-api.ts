@@ -53,7 +53,7 @@ export class StoryblokApiClient{
                         message += `: ${text}`;
                     }
                 } catch {
-                    // если вообще ничего прочитать нельзя — оставляем только статус
+                   
                 }
             }
         
