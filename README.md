@@ -34,29 +34,7 @@ Add to your MCP configuration file (e.g., `~/.cursor/mcp.json`):
 }
 ```
 
-### Global Installation
 
-```bash
-npm install -g sb-content-creator
-```
-
-Then use in your MCP config:
-
-```json
-{
-  "mcpServers": {
-    "storyblok-content-creator": {
-      "command": "sb-content-creator",
-      "args": [
-        "--space-id",
-        "YOUR_SPACE_ID",
-        "--access-token",
-        "YOUR_ACCESS_TOKEN"
-      ]
-    }
-  }
-}
-```
 
 ## Configuration
 
