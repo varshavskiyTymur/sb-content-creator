@@ -2,32 +2,44 @@
   "name": "sb-content-creator",
   "version": "1.0.0",
   "description": "An MCP client for AI interaction with code and the Storyblok CMS, allowing for content creation without manual intervention.",
-  "main": "index.js",
+  "main": "build/index.js",
+  "bin":{
+    "sb-content-creator": "./build/index.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && chmod 755 build/index.js"
+    "build": "tsc && chmod 755 build/index.js",
+    "prepublishOnly": "npm run build"
   },
   "files": [
-    "build"
+    "build/**/*",
+    "README.md",
+    "LICENSE"
   ],
+  "keywords": [
+    "mcp",
+    "storyblok",
+    "cms",
+    "ai",
+    "content-creator",
+    "model-context-protocol",
+    "automation"
+  ],
+  "author": "Leetio",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/varshavskiyTymur/sb-content-creator.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "module",
-  "bin": {
-    "sb-content-creator": "./dist/index.js"
-  },
   "bugs": {
     "url": "https://github.com/varshavskiyTymur/sb-content-creator/issues"
   },
   "homepage": "https://github.com/varshavskiyTymur/sb-content-creator#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.22.0",
-    "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "zod": "^3.25.76"
   },
