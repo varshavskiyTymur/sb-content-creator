@@ -19,7 +19,7 @@
   "license": "ISC",
   "type": "module",
   "bin": {
-    "sb-content-creator": "./dist/index.js"
+    "sb-content-creator": "./build/index.js"
   },
   "bugs": {
     "url": "https://github.com/varshavskiyTymur/sb-content-creator/issues"
@@ -27,7 +27,6 @@
   "homepage": "https://github.com/varshavskiyTymur/sb-content-creator#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.22.0",
-    "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "zod": "^3.25.76"
   },
