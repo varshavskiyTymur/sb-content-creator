@@ -1,9 +1,9 @@
 {
   "name": "sb-content-creator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An MCP client for AI interaction with code and the Storyblok CMS, allowing for content creation without manual intervention.",
   "main": "build/index.js",
-  "bin":{
+  "bin": {
     "sb-content-creator": "./build/index.js"
   },
   "scripts": {
