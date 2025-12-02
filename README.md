@@ -19,7 +19,7 @@ Add to your MCP configuration file (e.g., `~/.cursor/mcp.json`):
 ```json
 {
   "mcpServers": {
-    "storyblok": {
+    "storyblok-content-creator": {
       "command": "npx",
       "args": [
         "-y",
@@ -45,7 +45,7 @@ Then use in your MCP config:
 ```json
 {
   "mcpServers": {
-    "storyblok": {
+    "storyblok-content-creator": {
       "command": "sb-content-creator",
       "args": [
         "--space-id",
