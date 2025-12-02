@@ -1,4 +1,4 @@
-import{ McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StoryblokApiClient } from "../services/storyblok-api.js";
 import { registerStoryTools } from "../tools/stories.js";
 import { registerAssetTools } from "../tools/assets.js";
@@ -6,7 +6,7 @@ import { registerComponentTools } from "../tools/components.js";
 
 
 export function createStoryblokServer() {
-    console.error("Creating McpServer instance...");
+    console.log("Creating McpServer instance...");
     const server = new McpServer(
         {
             name: "storyblok-content-creator",
@@ -19,7 +19,7 @@ export function createStoryblokServer() {
             },
         }
     );
-    console.error("McpServer instance created");
+    console.log("McpServer instance created");
 
     const args = process.argv.slice(2);
     function getArgs(name: string): string | undefined {
@@ -29,18 +29,8 @@ export function createStoryblokServer() {
 
     const spaceId = getArgs("--space-id");
     const accessToken = getArgs("--access-token");
-
-    if(!spaceId) {
-        throw new Error("Space ID is required");
-    }
-
-    if(!accessToken) {
-        throw new Error("Access token is required");
-    }
-
     const apiBase = "https://mapi.storyblok.com/v1"; 
-
-    console.error(`Parsed args - spaceId: ${spaceId ? 'present' : 'missing'}, accessToken: ${accessToken ? 'present' : 'missing'}, apiBase: ${apiBase}`);
+    console.log(`Parsed args - spaceId: ${spaceId ? 'present' : 'missing'}, accessToken: ${accessToken ? 'present' : 'missing'}, apiBase: ${apiBase}`);
 
     if (!spaceId || !accessToken || !apiBase) {
         const error = `Missing required arguments: spaceId=${!!spaceId}, accessToken=${!!accessToken}, apiBase=${!!apiBase}`;
@@ -48,20 +38,24 @@ export function createStoryblokServer() {
         throw new Error(error);
     }
 
-    console.error("Creating StoryblokApiClient...");
+    console.log("Creating StoryblokApiClient...");
     const apiClient = new StoryblokApiClient(spaceId, accessToken, apiBase);
-    console.error("StoryblokApiClient created");
+    console.log("StoryblokApiClient created");
 
     try {
-        console.error("Registering story tools...");
+        console.log("Registering story tools...");
         registerStoryTools(server, apiClient);
-        console.error("Story tools registered");
+        console.log("Story tools registered");
         
-        console.error("Registering asset tools...");
+        console.log("Registering asset tools...");
         registerAssetTools(server, apiClient);
-        console.error("Asset tools registered");
+        console.log("Asset tools registered");
+
+        console.log("Registering component tools...");
+        registerComponentTools(server, apiClient);
+        console.log("Component tools registered");
         
-        console.error("All tools registered successfully");
+        console.log("All tools registered successfully");
     } catch (error) {
         console.error("Error registering tools:", error);
         throw error;
