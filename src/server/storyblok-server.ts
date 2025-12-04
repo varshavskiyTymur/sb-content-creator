@@ -5,7 +5,11 @@ import { registerAssetTools } from "../tools/assets.js";
 import { registerComponentTools } from "../tools/components.js";
 
 
-export function createStoryblokServer() {
+export function createStoryblokServer(
+    spaceId: string,
+    accessToken: string,
+    apiBase: string,
+) {
     console.log("Creating McpServer instance...");
     const server = new McpServer(
         {
@@ -27,9 +31,9 @@ export function createStoryblokServer() {
         return index !== -1 ? args[index + 1] : undefined;
     }
 
-    const spaceId = getArgs("--space-id");
-    const accessToken = getArgs("--access-token");
-    const apiBase = "https://mapi.storyblok.com/v1"; 
+    const finalSpaceId = spaceId || process.env.SPACE_ID || getArgs("--space-id");
+    const finalAccessToken = accessToken || process.env.ACCESS_TOKEN || getArgs("--access-token");
+    const finalApiBase = apiBase || process.env.API_BASE || "https://mapi.storyblok.com/v1";
     console.log(`Parsed args - spaceId: ${spaceId ? 'present' : 'missing'}, accessToken: ${accessToken ? 'present' : 'missing'}, apiBase: ${apiBase}`);
 
     if (!spaceId || !accessToken || !apiBase) {

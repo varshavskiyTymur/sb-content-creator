@@ -8,7 +8,9 @@
   },
   "scripts": {
     "build": "tsc && chmod 755 build/index.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "start:http": "node build/http-index.js",
+    "dev:http": "tsx src/http-index.ts"
   },
   "files": [
     "build/**/*",
@@ -40,10 +42,14 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.22.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^24.10.1",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.20.6",
