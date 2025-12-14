@@ -6,7 +6,8 @@ import { createStoryblokServer } from "./server/storyblok-server.js";
 async function main() {
     const transport = new StdioServerTransport();
 
-    const server = createStoryblokServer();
+    // В CLI режиме credentials берутся из аргументов или env variables
+    const server = createStoryblokServer("", "");
 
     await server.connect(transport);
     console.error("Storyblok content creator server is running");

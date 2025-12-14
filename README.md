@@ -105,6 +105,55 @@ Once configured in your MCP client (like Cursor), you can use natural language:
 "Update story with ID 12345 and change the title"
 ```
 
+## Remote Server (Multi-User)
+
+You can use the publicly hosted MCP server where each user provides their own Storyblok credentials via HTTP headers.
+
+### Configuration for ChatGPT / Remote MCP Clients
+
+Connect to the remote server with your credentials:
+
+**Endpoint:** `https://your-railway-url.railway.app/mcp`
+
+**Required Headers:**
+| Header | Description |
+|--------|-------------|
+| `X-Space-Id` | Your Storyblok Space ID |
+| `X-Access-Token` | Your Storyblok Management API token |
+
+### Example MCP Configuration (Remote)
+
+```json
+{
+  "mcpServers": {
+    "storyblok": {
+      "url": "https://your-railway-url.railway.app/mcp",
+      "headers": {
+        "X-Space-Id": "YOUR_SPACE_ID",
+        "X-Access-Token": "YOUR_ACCESS_TOKEN"
+      }
+    }
+  }
+}
+```
+
+### Self-Hosting
+
+Deploy your own instance:
+
+```bash
+# Using Railway
+railway login
+railway link
+railway up
+
+# Or using Docker
+docker build -t storyblok-mcp .
+docker run -p 3000:3000 storyblok-mcp
+```
+
+No environment variables needed for multi-user mode - each user passes their own credentials via headers.
+
 ## Development
 
 ### Prerequisites
